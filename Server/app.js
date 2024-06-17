@@ -1,6 +1,8 @@
 import express from "express"
 import { Server } from "socket.io"
 import {createServer} from "http"
+
+
 import cors from "cors"
 const PORT = 3000
 
@@ -18,7 +20,6 @@ const io = new Server(server, {
 
 
 app.use(cors())
-
 app.get("/", (req, res)=>{
     res.send("welcome to HTTP server")
 })
@@ -28,10 +29,23 @@ app.get("/", (req, res)=>{
 io.on("connection", (socket)=>{
     console.log("USer connected");
     console.log(socket.id);
+
+      // Disconnect Event 
+        socket.on("disconnect", ()=>{
+            console.log(`User Disconnected ${socket.id}`);
+        })
+      // Emit Event
+     socket.emit("other", `welcome ID users ${socket.id}`)
+
+     // BroadCast Event
+     socket.broadcast.emit("other", `${socket.id} Joinded The server`)
+
+  
+
+
+
+
 })
-
-
-
 
 
 server.listen(PORT, ()=>{
