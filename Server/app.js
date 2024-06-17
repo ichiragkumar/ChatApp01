@@ -31,8 +31,8 @@ io.on("connection", (socket)=>{
 
        socket.on("message" ,(data)=>{
         console.log(data);
-        io.emit("message-recieve", data)
-       
+        // io.emit("message-recieve", data)
+        socket.broadcast.emit("message-recieve", data)
 
         // broadcast message
        })
