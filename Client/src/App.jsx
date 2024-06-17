@@ -1,9 +1,19 @@
 import {io} from "socket.io-client"
-import React, {useEffect} from "react"
-
+import  {useEffect, useMemo, useState} from "react"
+import {Container, TextField, Typography, Button} from "@mui/material"
 const App = () => {
 
-  const socket = io("http://localhost:3000")
+  const socket = useMemo(()=>io("http://localhost:3000"),[])
+
+  const [message, setMessage] = useState("")
+
+  const handleSubmit = (e)=>{
+    e.preventDefault()
+    socket.emit("message",message)
+    setMessage("")
+  
+  }
+
 
 
   useEffect(()=>{
@@ -20,6 +30,11 @@ const App = () => {
       console.log(os);
     })
 
+    socket.on("message-recieve", (ms)=>{
+      console.log(`user ${socket.id} Message Receive ${ms}`);
+    })
+
+    
     return () =>{
       socket.disconnect()
     }
@@ -28,12 +43,22 @@ const App = () => {
 
   
 
-  return (
+  return <Container maxWidth="sm">
 
-    <div>
-        <h1>Welcome to Real Time Chat App</h1>
-    </div>
-  )
+    <Typography variant="h1" component="div" gutterBottom>
+          Welcome to SocketIO
+    </Typography>
+    <form onSubmit={handleSubmit}>
+     <TextField 
+        id="outlined-basic" 
+        label="Outlined" 
+        variant="outlined"  
+        value={message} 
+        onChange={(e)=>{setMessage(e.target.value)
+     }}/>
+     <Button type="submit" variant="outlined">Send message</Button>
+    </form>
+  </Container>
 }
 
 export default App

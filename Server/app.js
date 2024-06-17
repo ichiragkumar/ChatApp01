@@ -27,18 +27,35 @@ app.get("/", (req, res)=>{
 
 
 io.on("connection", (socket)=>{
-    console.log("USer connected");
-    console.log(socket.id);
+        console.log(`User Connected ${socket.id}`);
+
+       socket.on("message" ,(data)=>{
+        console.log(data);
+        io.emit("message-recieve", data)
+       
+
+        // broadcast message
+       })
+
+    
+
 
       // Disconnect Event 
         socket.on("disconnect", ()=>{
             console.log(`User Disconnected ${socket.id}`);
         })
-      // Emit Event
-     socket.emit("other", `welcome ID users ${socket.id}`)
 
-     // BroadCast Event
-     socket.broadcast.emit("other", `${socket.id} Joinded The server`)
+
+        /*
+
+
+        // Emit Event
+        socket.emit("other", `welcome ID users ${socket.id}`)
+
+        // BroadCast Event
+        socket.broadcast.emit("other", `${socket.id} Joinded The server`)
+
+        */
 
   
 
