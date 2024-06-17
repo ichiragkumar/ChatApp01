@@ -4,6 +4,8 @@ import {createServer} from "http"
 
 
 import cors from "cors"
+import jwt from "jsonwebtoken"
+
 const PORT = 3000
 
 const app = express()
@@ -19,9 +21,27 @@ const io = new Server(server, {
 })
 
 
-app.use(cors())
+
+app.use(cors({
+    origin:"http://localhost:5173",
+    methods:["GET", "POST"],
+    credentials:true,
+}))
+io.use((socket, next)=>{
+    next()
+})
 app.get("/", (req, res)=>{
     res.send("welcome to HTTP server")
+})
+
+const JWT_secret = "Sdfsdf"
+app.get("/login", (req, res)=>{
+    const token = jwt.sign({_id:"sdfawsdf"},JWT_secret)
+    res.cookie("token", token, {httpOnly:true, secure:true, sameSite:"none"})
+    .json({
+        message:"Login succesfull"
+    })
+
 })
 
 
@@ -29,12 +49,17 @@ app.get("/", (req, res)=>{
 io.on("connection", (socket)=>{
         console.log(`User Connected ${socket.id}`);
 
-       socket.on("message" ,(data)=>{
-        console.log(data);
+       socket.on("message" ,({room, message})=>{
         // io.emit("message-recieve", data)
-        socket.broadcast.emit("message-recieve", data)
+        socket.to(room).emit("message-recieve", message)
 
         // broadcast message
+       })
+
+
+       socket.on("join-room", (roomName)=>{
+        socket.join(roomName)
+        console.log("joined Room", roomName);
        })
 
     

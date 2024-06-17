@@ -8,6 +8,7 @@ const App = () => {
   const [message, setMessage] = useState("")
   const [room, setRoom] = useState("")
   const [socketID, setSocketID] = useState("")
+  const [roomName, setRoomName] = useState("")
   const [allmessages, setMessagesonScreen] = useState([])
 
   console.log(message);
@@ -23,6 +24,12 @@ const App = () => {
     e.preventDefault()
     socket.emit("message",{message,room})
     setMessage("")
+  }
+
+  const joinRoomHandler = (e) =>{
+    e.preventDefault()
+    socket.emit("join-room", roomName)
+    setRoomName("JOINED")
   }
 
 
@@ -63,6 +70,24 @@ const App = () => {
 
     <Typography variant="h2" component="div" gutterBottom>REAL TIME</Typography>
     <Typography variant="h5" component="div" gutterBottom>{socketID}</Typography>
+
+    <form onSubmit={joinRoomHandler}>
+      <h5>Join Room </h5>
+      <TextField 
+            id="outlined-basic" 
+            label="Room Name" 
+            variant="outlined"  
+            value={roomName} 
+            onChange={(e)=>{setRoomName(e.target.value)
+        }}/>
+
+     <Button type="submit" variant="outlined">JOIN</Button>
+
+    </form>
+
+
+
+
     <form onSubmit={roomSubmit}>
     <TextField 
             id="outlined-basic" 
